@@ -14,7 +14,7 @@ services:
       context: .
       dockerfile: Dockerfile  # need a Dockerfile to install deps & run stream_processor
     volumes:
-      - ~/tmp/test_json_payloads:/opt/test_json_payloads  # Mount local dir to container dir
+      - /tmp/test_json_payloads:/tmp/test_json_payloads  # Mount local dir to container dir
     depends_on:
       - pulsar
     environment:
