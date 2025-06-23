@@ -52,6 +52,8 @@ import pulsar
 import orjson
 from time import sleep
 import os
+from pathlib import Path
+import json
 
 from data_generator.data_generator import assemble_event
 from data_generator.models.base import Event
@@ -135,6 +137,13 @@ def run_burst_mode(burst_size: int = 10, delay_between_events: float = 0.1):
             print("-------------------------------------------")
             print(f"Generated event: {event.model_dump_json()}")
             print("-------------------------------------------")
+            #write to local file for debugging
+            file_path = Path(f"/tmp/test_json_payloads/event_{event.tenant_id}.json")
+            event_json = event.model_dump_json()
+            with file_path.open("w") as f:
+                json.dump(event_json, f, indent=4)
+            
+            # Send the event to Pulsar    
             send_event_to_pulsar(event, client)
             sleep(delay_between_events)
     finally:
