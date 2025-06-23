@@ -83,7 +83,7 @@ def send_event_to_pulsar(event:Event, client):
     producer.close()
 
 
-def run_event_loop(rate_per_sec: int = 1):
+def run_event_loop(rate_per_sec: float = 0.02):
     client = pulsar.Client("pulsar://localhost:6650")  # Use 'pulsar' if running inside Docker
 
     try:
@@ -93,8 +93,7 @@ def run_event_loop(rate_per_sec: int = 1):
             print(f"Generated event: {event.model_dump_json()}")  # Log the event for debugging
             print("-------------------------------------------")
             send_event_to_pulsar(event, client)
-            # sleep(1 / rate_per_sec)
-            sleep(15)
+            sleep(1 / rate_per_sec)
 
     except KeyboardInterrupt:
         print("🛑 Stopping...")
@@ -102,4 +101,38 @@ def run_event_loop(rate_per_sec: int = 1):
         client.close()
 
 
-#TODO: Burst mode for testing - send x number of events in a short time then stop
+def run_burst_mode(burst_size: int = 10, delay_between_events: float = 0.1):
+    """
+    Sends a burst of events to Pulsar and exits.
+
+    Args:
+        burst_size: Number of events to send in the burst.
+        delay_between_events: Time (in seconds) between each event.
+    """
+    client = pulsar.Client("pulsar://localhost:6650")
+    topic_set = () # List to store pulsar topics for each event
+
+    try:
+        for _ in range(burst_size):
+            event = assemble_event()
+            topic_set += (f"persistent://public/default/{event.tenant_id}.events",)
+            print("-------------------------------------------")
+            print(f"Generated event: {event.model_dump_json()}")
+            print("-------------------------------------------")
+            send_event_to_pulsar(event, client)
+            sleep(delay_between_events)
+    finally:
+        client.close()
+        print(f"Burst of {burst_size} events sent.")
+        print(f"Topics used: {', '.join(topic_set)}")
+
+
+if __name__ == "__main__":
+
+    #for continuous event generation
+    # run_event_loop(rate_per_sec=0.02)  # Adjust rate as needed
+    # run_event_loop(rate_per_sec=1)  # For testing, send 1 event per second
+    # run_event_loop(rate_per_sec=10)  # For testing, send 10 events per second
+
+    #for burst mode event generation
+    run_burst_mode(burst_size=10, delay_between_events=0.1)

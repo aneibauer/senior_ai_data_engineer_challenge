@@ -54,10 +54,11 @@ import orjson  # faster than json
 import random
 
 
-def assemble_event() -> Event:
+def assemble_event(n:int=10) -> Event:
     """
     Assembles and returns an Event object populated with default and generated context data.
-
+    Parameters:
+        n (int): Number of tenants to choose from for tenant_id. Default is 10.
     Returns:
         Event: An Event instance with the following fields populated:
             - schema_version: The version of the event schema.
@@ -70,7 +71,7 @@ def assemble_event() -> Event:
     """
     return Event(
         schema_version="2.1", #TODO: update schema version as needed
-        tenant_id=f"merchant_{random.randint(1,100)}",
+        tenant_id=f"merchant_{random.randint(1,n)}",
         partition_key="user_region_hash",  # customize as needed
         event_metadata=make_event_metadata(),
         event_data=EventData(
