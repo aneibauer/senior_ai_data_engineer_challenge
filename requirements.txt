@@ -11,10 +11,10 @@
 # flink-connector-jdbc>=1.18.0
 
 # OPTION B: Apache Pulsar + Spark Ecosystem (Multi-tenant focus)  
-# pyspark>=3.5.0
-# delta-spark>=2.4.0  
-# pulsar-client>=3.3.0
-# spark-streaming-pulsar>=3.5.0
+pyspark>=3.5.0
+delta-spark>=2.4.0  
+pulsar-client>=3.3.0
+spark-streaming-pulsar>=3.5.0
 
 # OPTION C: Cloud-Native Stack (Managed services focus)
 # apache-beam[gcp]>=2.50.0  # or [aws] or [azure]
