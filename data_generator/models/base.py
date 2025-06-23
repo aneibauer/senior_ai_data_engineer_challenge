@@ -1,9 +1,11 @@
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
-import uuid
 from enum import Enum
-import random
+
+from data_generator.models.technical import TechnicalContext
+from data_generator.models.ml import MLContext
+from data_generator.models.event_data import EventData
 
 class SourceSystem(Enum):
     WEB_APP = "web_app"
@@ -36,40 +38,6 @@ class Event(BaseModel):
     tenant_id: str
     partition_key: str
     event_metadata: EventMetadata
-    event_data: dict  # Placeholder until EventData model is defined
-    technical_context: Optional[dict] = None  # To be replaced with TechnicalContext
-    ml_context: Optional[dict] = None         # To be replaced with MLContext
-
-
-def make_event_metadata() -> EventMetadata:
-    return EventMetadata(
-        event_id=str(uuid.uuid4()),
-        correlation_id=str(uuid.uuid4()),
-        causation_id=str(uuid.uuid4()),
-        timestamp=datetime.now(),
-        ingestion_timestamp=datetime.now(),
-        source_system=random.choice(list(SourceSystem)),
-        event_version="1.0",
-        processing_flags=ProcessingFlags(
-            requires_enrichment=random.choice([True, False]),
-            pii_contains=random.choice([True, False]),
-            gdpr_subject=random.choice([True, False]),
-            audit_required=random.choice([True, False])
-        )
-    )
-
-def make_base_event() -> Event:
-    return Event(
-        schema_version="2.1",
-        tenant_id="merchant_12345",
-        partition_key="us-east-hash",
-        event_metadata=make_event_metadata(),
-        event_data={},  # fill this in later with full nested structure
-        technical_context={},
-        ml_context={}
-    )
-
-#tested and working
-if __name__ == "__main__":
-    event = make_base_event()
-    print(event.model_dump_json(indent=2))  # Print the event in a readable JSON form
+    event_data: EventData
+    technical_context: Optional[TechnicalContext] = None
+    ml_context: Optional[MLContext] = None

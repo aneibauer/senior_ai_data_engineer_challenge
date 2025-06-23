@@ -1,7 +1,8 @@
 from pydantic import BaseModel, Field
 from typing import List
 from enum import Enum
-
+import random
+import uuid
 
 # --- Infrastructure Metadata ---
 
@@ -55,8 +56,13 @@ class DownstreamTargets(Enum):
     ML_FEATURE_STORE = 'ml_feature_store'
     AUDIT_LOG = 'audit_log'
 
+class UpstreamSystems(Enum):
+    USER_SERVICE = 'user_service'
+    PRODUCT_CATALOG = 'product_catalog'
+    INVENTORY_SERVICE = 'inventory_service'
+
 class DataLineage(BaseModel):
-    upstream_systems: List[str]
+    upstream_systems: List[UpstreamSystems]
     transformation_applied: List[TransformationTypes]
     downstream_targets: List[DownstreamTargets]
 

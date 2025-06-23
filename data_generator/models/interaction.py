@@ -1,13 +1,22 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import Enum
+import random
 
 
 # --- Touchpoint Attribution ---
+class TouchpointType(Enum):
+    GOOGLE_SEARCH = 'google_search'
+    EMAIL = 'email'
+    AD = 'ad'
+    ORGANIC = 'organic'
+    REFERRAL = 'referral'
+    DIRECT = 'direct'
+
 
 class TouchpointJourney(BaseModel):
-    touchpoint: str
+    touchpoint: TouchpointType
     timestamp: datetime
     attribution_weight: float
     campaign_id: Optional[str] = None  # Present for things like email campaigns
@@ -24,7 +33,7 @@ class PageLoadMetrics(BaseModel):
 
 
 class Coordinates(BaseModel):
-    x: int
+    x: int #TODO: Change to float if needed for more precision and ensure valid values 
     y: int
 
 class InteractionTypes(Enum):

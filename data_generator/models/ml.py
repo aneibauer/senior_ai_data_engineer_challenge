@@ -1,5 +1,8 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
+import random
+from datetime import datetime, timedelta
+import uuid
 
 
 # --- Feature Vectors ---
