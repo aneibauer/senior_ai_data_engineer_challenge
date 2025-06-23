@@ -137,6 +137,7 @@ def run_burst_mode(burst_size: int = 10, delay_between_events: float = 0.1):
             print("-------------------------------------------")
             print(f"Generated event: {event.model_dump_json()}")
             print("-------------------------------------------")
+
             #write to local file for debugging
             file_path = Path(f"/tmp/test_json_payloads/event_{event.tenant_id}.json")
             event_json = event.model_dump_json()

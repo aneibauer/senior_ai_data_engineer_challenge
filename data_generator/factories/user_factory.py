@@ -89,7 +89,7 @@ def make_user_profile() -> UserProfile:
             lifecycle_stage=random.choice(list(LifecycleStageEnum)),
             behavioral_segments=random.sample(["high_spender", "mobile_first", "price_sensitive"], 2),
             predictive_scores=PredictiveScores(
-                churn_probability=round(random.uniform(0.0, 1.0), 2),
+                churn_probability=round(random.uniform(0.01, 1.0), 2),
                 lifetime_value=round(random.uniform(100, 5000), 2),
                 next_purchase_days=random.randint(1, 60)
             )

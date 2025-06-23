@@ -2,13 +2,24 @@ services:
 
   #troubleshooting: remove cached constainers
   pulsar:
-    image: apachepulsar/pulsar:latest
+    image: apachepulsar/pulsar-all:latest
     container_name: pulsar
     command: bin/pulsar standalone
     ports:
       - "6650:6650" # pulsar client port
       - "8080:8080" # pulsar admin port
 
+  data-generator:
+    build:
+      context: .
+      dockerfile: Dockerfile  # need a Dockerfile to install deps & run stream_processor
+    volumes:
+      - ~/tmp/test_json_payloads:/opt/test_json_payloads  # Mount local dir to container dir
+    depends_on:
+      - pulsar
+    environment:
+      - PULSAR_HOST=pulsar #pulsar client will be created with pulsar service name instead of localhost
+    command: python3 -m scripts.stream_processor  # start generating data and sending to Pulsar
 
   spark:
   # Using the Bitnami Spark image, which is a popular choice for running Spark in Docker
@@ -19,7 +30,7 @@ services:
     container_name: spark
     volumes:
       - ./spark_output:/opt/spark/output  # Mount local dir (./spark_output) to container dir (/opt/spark/output)
-      - ./jars:/opt/spark/jars  # Mount local dir (./jars) to container dir (/opt/spark/jars)
+      - ./spark_checkpoints:/opt/spark/checkpoints  # Mount local dir for Spark checkpoints
     depends_on:
       - pulsar
     environment:
@@ -39,16 +50,6 @@ services:
   #   depends_on:
   #     - spark
 
-
-  data-generator:
-    build:
-      context: .
-      dockerfile: Dockerfile  # need a Dockerfile to install deps & run stream_processor
-    depends_on:
-      - pulsar
-    environment:
-      - PULSAR_HOST=pulsar #pulsar client will be created with pulsar service name instead of localhost
-    command: python3 -m scripts.stream_processor  # start generating data and sending to Pulsar
 
   # postgres:
   #   image: postgres:15

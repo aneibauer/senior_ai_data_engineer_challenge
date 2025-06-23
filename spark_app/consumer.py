@@ -11,7 +11,6 @@ def main():
     spark = SparkSession.builder \
         .appName("PulsarConsumer") \
         .master("local[*]") \
-        .config("spark.jars", "/opt/spark/jars/pulsar-spark-connector_2.12-3.1.0.1.jar") \
         .getOrCreate()
 
     spark.sparkContext.setLogLevel("WARN")
