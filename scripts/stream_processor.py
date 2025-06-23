@@ -85,10 +85,14 @@ def send_event_to_pulsar(event:Event, client):
 
 def run_event_loop(rate_per_sec: float = 0.02):
     client = pulsar.Client("pulsar://localhost:6650")  # Use 'pulsar' if running inside Docker
+    topic_set = set() # Set to store pulsar topics for each event
+    merchant_ids = set()  # Set to store unique merchant IDs for the events
 
     try:
         while True:
             event = assemble_event()
+            topic_set.add(f"persistent://public/default/{event.tenant_id}.events")  # Collect unique topics
+            merchant_ids.add(event.tenant_id)  # Collect unique tenant IDs
             print("-------------------------------------------")
             print(f"Generated event: {event.model_dump_json()}")  # Log the event for debugging
             print("-------------------------------------------")
@@ -98,7 +102,9 @@ def run_event_loop(rate_per_sec: float = 0.02):
     except KeyboardInterrupt:
         print("🛑 Stopping...")
     finally:
+        print(f"Topics used: {', '.join(topic_set)}")
         client.close()
+    return topic_set, merchant_ids
 
 
 def run_burst_mode(burst_size: int = 10, delay_between_events: float = 0.1):
@@ -110,12 +116,14 @@ def run_burst_mode(burst_size: int = 10, delay_between_events: float = 0.1):
         delay_between_events: Time (in seconds) between each event.
     """
     client = pulsar.Client("pulsar://localhost:6650")
-    topic_set = () # List to store pulsar topics for each event
+    topic_set = set() # Set to store pulsar topics for each event
+    merchant_ids = set()  # Set to store unique merchant IDs for the events
 
     try:
         for _ in range(burst_size):
             event = assemble_event()
-            topic_set += (f"persistent://public/default/{event.tenant_id}.events",)
+            topic_set.add(f"persistent://public/default/{event.tenant_id}.events")  # Collect unique topics
+            merchant_ids.add(event.tenant_id)  # Collect unique tenant IDs
             print("-------------------------------------------")
             print(f"Generated event: {event.model_dump_json()}")
             print("-------------------------------------------")
@@ -125,6 +133,7 @@ def run_burst_mode(burst_size: int = 10, delay_between_events: float = 0.1):
         client.close()
         print(f"Burst of {burst_size} events sent.")
         print(f"Topics used: {', '.join(topic_set)}")
+    return topic_set, merchant_ids
 
 
 if __name__ == "__main__":
@@ -135,4 +144,5 @@ if __name__ == "__main__":
     # run_event_loop(rate_per_sec=10)  # For testing, send 10 events per second
 
     #for burst mode event generation
-    run_burst_mode(burst_size=10, delay_between_events=0.1)
+    topic_set, merchant_ids = run_burst_mode(burst_size=10, delay_between_events=0.1)
+    print(merchant_ids)

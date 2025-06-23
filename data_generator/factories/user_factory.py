@@ -66,7 +66,7 @@ def make_session_data() -> SessionData:
 def make_user_profile() -> UserProfile:
     return UserProfile(
         account_type=random.choice(list(AccountTypeEnum)),
-        registration_date=datetime(random.randint(2020,2025), random.randint(1,12), random.randint(1,31)),
+        registration_date=datetime(random.randint(2020,2025), random.randint(1,12), random.randint(1,28)),
         verification_status=random.choice(["verified", "pending", "unverified"]),
         
         risk_profile=RiskProfile(
