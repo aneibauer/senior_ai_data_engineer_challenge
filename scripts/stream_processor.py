@@ -87,6 +87,7 @@ def send_event_to_pulsar(event:Event, client):
 def run_event_loop(rate_per_sec: float = 0.02):
 
     pulsar_host = os.getenv("PULSAR_HOST", "localhost")
+    print(f"--------------------- pulsar_host: {pulsar_host}")
     client = pulsar.Client(f"pulsar://{pulsar_host}:6650")
     # client = pulsar.Client("pulsar://pulsar:6650")  # Use 'pulsar' if running inside Docker
     topic_set = set() # Set to store pulsar topics for each event
@@ -120,6 +121,7 @@ def run_burst_mode(burst_size: int = 10, delay_between_events: float = 0.1):
         delay_between_events: Time (in seconds) between each event.
     """
     pulsar_host = os.getenv("PULSAR_HOST", "localhost")
+    print(f"--------------------- pulsar_host: {pulsar_host}")
     client = pulsar.Client(f"pulsar://{pulsar_host}:6650")
     # client = pulsar.Client("pulsar://localhost:6650")
     topic_set = set() # Set to store pulsar topics for each event

@@ -1,20 +1,15 @@
 services:
 
-  #this worked. docker said "pulsar Pulled"
+  #troubleshooting: remove cached constainers
   pulsar:
-    image: apachepulsar/pulsar:4.0.5
+    image: apachepulsar/pulsar:latest
     container_name: pulsar
     command: bin/pulsar standalone
     ports:
-      - "6650:6650"
-      - "8080:8080"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/admin/v2/clusters"]
-      interval: 10s
-      timeout: 5s
-      retries: 2
+      - "6650:6650" # pulsar client port
+      - "8080:8080" # pulsar admin port
 
-  #this worked. docker said "spark Pulled"
+
   spark:
     image: bitnami/spark:3.5.0
     container_name: spark
@@ -24,7 +19,7 @@ services:
       - "7077:7077"   # Spark master port
       - "8081:8081"   # Spark master web UI
 
-  #this worked. docker said "spark-worker Pulled"
+  # #this worked. docker said "spark-worker Pulled"
   spark-worker:
     image: bitnami/spark:3.5.0
     container_name: spark-worker
@@ -34,7 +29,7 @@ services:
     depends_on:
       - spark
 
-  #this didn't work.. something about pulsar client"
+
   data-generator:
     build:
       context: .
