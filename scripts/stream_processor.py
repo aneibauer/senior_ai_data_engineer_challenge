@@ -51,6 +51,7 @@ in stream processing, event-driven architectures, and production operations.
 import pulsar
 import orjson
 from time import sleep
+import os
 
 from data_generator.data_generator import assemble_event
 from data_generator.models.base import Event
@@ -84,7 +85,10 @@ def send_event_to_pulsar(event:Event, client):
 
 
 def run_event_loop(rate_per_sec: float = 0.02):
-    client = pulsar.Client("pulsar://localhost:6650")  # Use 'pulsar' if running inside Docker
+
+    pulsar_host = os.getenv("PULSAR_HOST", "localhost")
+    client = pulsar.Client(f"pulsar://{pulsar_host}:6650")
+    # client = pulsar.Client("pulsar://pulsar:6650")  # Use 'pulsar' if running inside Docker
     topic_set = set() # Set to store pulsar topics for each event
     merchant_ids = set()  # Set to store unique merchant IDs for the events
 
@@ -115,7 +119,9 @@ def run_burst_mode(burst_size: int = 10, delay_between_events: float = 0.1):
         burst_size: Number of events to send in the burst.
         delay_between_events: Time (in seconds) between each event.
     """
-    client = pulsar.Client("pulsar://localhost:6650")
+    pulsar_host = os.getenv("PULSAR_HOST", "localhost")
+    client = pulsar.Client(f"pulsar://{pulsar_host}:6650")
+    # client = pulsar.Client("pulsar://localhost:6650")
     topic_set = set() # Set to store pulsar topics for each event
     merchant_ids = set()  # Set to store unique merchant IDs for the events
 

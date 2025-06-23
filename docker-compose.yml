@@ -1,7 +1,6 @@
-version: '3.8'
-
 services:
 
+  #this worked. docker said "pulsar Pulled"
   pulsar:
     image: apachepulsar/pulsar:4.0.5
     container_name: pulsar
@@ -13,8 +12,9 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:8080/admin/v2/clusters"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 2
 
+  #this worked. docker said "spark Pulled"
   spark:
     image: bitnami/spark:3.5.0
     container_name: spark
@@ -24,6 +24,7 @@ services:
       - "7077:7077"   # Spark master port
       - "8081:8081"   # Spark master web UI
 
+  #this worked. docker said "spark-worker Pulled"
   spark-worker:
     image: bitnami/spark:3.5.0
     container_name: spark-worker
@@ -33,13 +34,16 @@ services:
     depends_on:
       - spark
 
+  #this didn't work.. something about pulsar client"
   data-generator:
     build:
       context: .
-      dockerfile: Dockerfile  # You’ll need a Dockerfile to install deps & run stream_processor
+      dockerfile: Dockerfile  # need a Dockerfile to install deps & run stream_processor
     depends_on:
       - pulsar
-    command: python -m stream_processor  # or whatever CLI entry runs your burst/event loop
+    environment:
+      - PULSAR_HOST=pulsar #pulsar client will be created with pulsar service name instead of localhost
+    command: python3 -m scripts.stream_processor  # start generating data and sending to Pulsar
 
   # postgres:
   #   image: postgres:15
