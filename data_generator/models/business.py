@@ -5,6 +5,7 @@ import uuid
 from enum import Enum
 import random
 from .user import CountryCodeEnum
+from datetime import datetime, timedelta
 
 class Verticals(Enum):
     ELECTRONICS = "electronics"
@@ -141,7 +142,7 @@ class Product(BaseModel):
 
 class TaxBreakdown(BaseModel):
     type: Literal['state_sales_tax', 'city_tax', 'federal_tax', 'luxury_tax']
-    rate: float
+    rate: float = Field(gt=0, le=0.2, description="Tax rate between 0 and .2")
     amount: float
 
 
@@ -355,18 +356,20 @@ def make_product() -> Product:
 def make_products() -> List[Product]:
     return [make_product() for _ in range(random.randint(1, 3))]
 
+
 def make_tax_breakdown(subtotal: float) -> List[TaxBreakdown]:
-    taxes = [
-        {"type": "state_sales_tax", "rate": 0.08},
-        {"type": "city_tax", "rate": 0.01}
-    ]
+    tax_types = ['state_sales_tax', 'city_tax', 'federal_tax', 'luxury_tax']
+    selected_types = random.sample(tax_types, k=random.randint(1, min(3, len(tax_types))))
+    rates=[round(random.uniform(0.01, 0.2), 3) for _ in selected_types]
+    types_and_rates = zip(selected_types, rates)
+    
     return [
         TaxBreakdown(
-            type=tax["type"],
-            rate=tax["rate"],
-            amount=round(subtotal * tax["rate"], 2)
+            type = tax_type,
+            rate = rate,
+            amount=round(subtotal * rate, 2)
         )
-        for tax in taxes
+        for tax_type,rate in types_and_rates
     ]
 
 
@@ -377,13 +380,18 @@ def make_shipping_costs() -> ShippingCosts:
         insurance=round(random.uniform(2.0, 7.0), 2)
     )
 
+class DiscountOptions(Enum):
+    PROMO_WINTER = "promo_winter"
+    PROMO_SUMMER = "promo_summer"
+    PROMO_BACK_TO_SCHOOL = "promo_back_to_school"
+    PROMO_BLACK_FRIDAY = "promo_black_friday"
 
 def make_discounts(subtotal: float) -> List[Discount]:
-    discount_value = 0.10  # 10%
+    discount_value = random.uniform(0.05, 0.50)  # Discount between 5% and 50%
     discount_amount = round(subtotal * discount_value, 2)
     return [
         Discount(
-            discount_id="promo_winter2024",
+            discount_id=f"{random.choice(list(DiscountOptions)).value}_{random.randint(2020, 2025)}",
             discount_type="percentage",
             discount_value=discount_value,
             discount_amount=discount_amount,
@@ -420,4 +428,57 @@ def make_cart_value(subtotal: float) -> CartValue:
         discounts_applied=discounts,
         loyalty_benefits=loyalty,
         final_total=final_total
+    )
+
+def make_billing_address() -> BillingAddress:
+    return BillingAddress(
+        address_hash=f"billing_{uuid.uuid4().hex[:8]}",
+        country=random.choice(list(CountryCodeEnum)),
+        postal_code=str(random.randint(10000, 99999)),
+        address_type=random.choice(['residential', 'commercial', 'po_box'])
+    )
+
+def make_risk_signals() -> RiskSignals:
+    return RiskSignals(
+        first_time_payment=random.choice([True, False]),
+        velocity_flag=random.choice([True, False]),
+        geo_mismatch=random.choice([True, False]),
+        fraud_score=round(random.uniform(0.01, 0.9), 2)
+    )
+
+def make_payment_method() -> PaymentMethod:
+    return PaymentMethod(
+        method_type=random.choice(list(PaymentMethodType)),
+        provider=random.choice(list(ProviderEnum)),
+        tokenized_identifier=f"token_{uuid.uuid4().hex[:6]}",
+        billing_address=make_billing_address(),
+        risk_signals=make_risk_signals()
+    )
+
+def make_shipping_address() -> ShippingAddress:
+    return ShippingAddress(
+        address_hash=f"shipping_{uuid.uuid4().hex[:8]}",
+        same_as_billing=random.choice([True, False]),
+        country=random.choice(list(CountryCodeEnum)),
+        postal_code=str(random.randint(10000, 99999)),
+        address_type=random.choice(['residential', 'commercial', 'po_box'])
+    )
+
+
+def make_shipping_method() -> ShippingMethod:
+    return ShippingMethod(
+        carrier=random.choice(['fedex', 'ups', 'usps', 'dhl']),
+        service_level=random.choice(['ground', 'express', 'overnight', 'same_day']),
+        estimated_delivery=datetime.utcnow() + timedelta(days=random.randint(1, 7)),
+        tracking_enabled=True,
+        signature_required=random.choice([True, False])
+    )
+
+def make_payment_context() -> PaymentContext:
+    return PaymentContext(
+        payment_methods=[make_payment_method()],
+        shipping_context=ShippingContext(
+            shipping_address=make_shipping_address(),
+            shipping_method=make_shipping_method()
+        )
     )
