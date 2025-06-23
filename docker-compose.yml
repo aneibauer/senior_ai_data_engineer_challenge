@@ -1,80 +1,79 @@
-#template for docker compose file
-
-version: "3.9"
+version: '3.8'
 
 services:
-  data-generator:
-    build:
-      context: ./data_generator  # folder with Dockerfile and code
-    depends_on:
-      - pulsar
-    restart: always
+
   pulsar:
-    image: apachepulsar/pulsar:3.2.0
+    image: apachepulsar/pulsar:4.0.5
+    container_name: pulsar
     command: bin/pulsar standalone
     ports:
-      - "6650:6650"   # Pulsar binary protocol
-      - "8080:8080"   # Pulsar admin REST API
-    restart: always
+      - "6650:6650"
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/admin/v2/clusters"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  
-#   spark:
-#     image: bitnami/spark:3.5
-#     volumes:
-#       - ./spark_app:/opt/spark-app   # Spark scripts
-#       - delta_data:/data/delta       # shared Delta volume
-#     depends_on:
-#       - pulsar
-#     environment:
-#       - SPARK_MODE=master
-#     restart: always
+  spark:
+    image: bitnami/spark:3.5.0
+    container_name: spark
+    environment:
+      - SPARK_MODE=master
+    ports:
+      - "7077:7077"   # Spark master port
+      - "8081:8081"   # Spark master web UI
 
-#   postgres:
-#     image: postgres:15
-#     restart: always
-#     environment:
-#       POSTGRES_DB: events
-#       POSTGRES_USER: postgres
-#       POSTGRES_PASSWORD: postgres
-#     volumes:
-#       - postgres_data:/var/lib/postgresql/data
-#     ports:
-#       - "5432:5432"
+  spark-worker:
+    image: bitnami/spark:3.5.0
+    container_name: spark-worker
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark:7077
+    depends_on:
+      - spark
 
-#   # ✅ FastAPI (Custom API App)
-#   fastapi:
-#     build:
-#       context: ./api  # folder with Dockerfile + FastAPI code
-#     ports:
-#       - "8000:8000"
-#     depends_on:
-#       - postgres
-#     environment:
-#       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/events
-#     restart: always
+  data-generator:
+    build:
+      context: .
+      dockerfile: Dockerfile  # You’ll need a Dockerfile to install deps & run stream_processor
+    depends_on:
+      - pulsar
+    command: python -m stream_processor  # or whatever CLI entry runs your burst/event loop
 
-#   # ✅ Prometheus
-#   prometheus:
-#     image: prom/prometheus:latest
-#     volumes:
-#       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-#     ports:
-#       - "9090:9090"
-#     restart: always
+  # postgres:
+  #   image: postgres:15
+  #   container_name: postgres
+  #   environment:
+  #     POSTGRES_USER: user
+  #     POSTGRES_PASSWORD: password
+  #     POSTGRES_DB: events
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
 
-#   # ✅ Grafana
-#   grafana:
-#     image: grafana/grafana:latest
-#     ports:
-#       - "3000:3000"
-#     volumes:
-#       - grafana_data:/var/lib/grafana
-#     depends_on:
-#       - prometheus
-#     restart: always
+  # fastapi:
+  #   build:
+  #     context: ./api
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     - postgres
 
-# # ✅ Persistent Volumes
+  # prometheus:
+  #   image: prom/prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  # grafana:
+  #   image: grafana/grafana
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - prometheus
+
 # volumes:
-#   delta_data:      # for Delta Lake parquet/logs
-#   postgres_data:   # for Postgres DB
-#   grafana_data:    # for Grafana dashboards + settings
+#   postgres_data:
