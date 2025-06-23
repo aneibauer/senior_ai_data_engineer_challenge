@@ -11,23 +11,33 @@ services:
 
 
   spark:
-    image: bitnami/spark:3.5.0
+  # Using the Bitnami Spark image, which is a popular choice for running Spark in Docker
+    build:
+      context: ./spark_app
+      dockerfile: Dockerfile #bitnami image in dockerfile
+    # image: bitnami/spark:latest
     container_name: spark
+    volumes:
+      - ./spark_output:/opt/spark/output  # Mount local dir (./spark_output) to container dir (/opt/spark/output)
+      - ./jars:/opt/spark/jars  # Mount local dir (./jars) to container dir (/opt/spark/jars)
+    depends_on:
+      - pulsar
     environment:
       - SPARK_MODE=master
     ports:
       - "7077:7077"   # Spark master port
       - "8081:8081"   # Spark master web UI
 
+
   # #this worked. docker said "spark-worker Pulled"
-  spark-worker:
-    image: bitnami/spark:3.5.0
-    container_name: spark-worker
-    environment:
-      - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark:7077
-    depends_on:
-      - spark
+  # spark-worker:
+  #   image: bitnami/spark:3.5.0
+  #   container_name: spark-worker
+  #   environment:
+  #     - SPARK_MODE=worker
+  #     - SPARK_MASTER_URL=spark://spark:7077
+  #   depends_on:
+  #     - spark
 
 
   data-generator:
@@ -44,13 +54,13 @@ services:
   #   image: postgres:15
   #   container_name: postgres
   #   environment:
-  #     POSTGRES_USER: user
+  #     POSTGRES_USER: user #in production these would be mountain to container,not hardcoded
   #     POSTGRES_PASSWORD: password
   #     POSTGRES_DB: events
   #   ports:
   #     - "5432:5432"
   #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
+  #     - postgres_data:/var/lib/postgresql/data #place on container where volume on host exists
 
   # fastapi:
   #   build:
@@ -75,4 +85,4 @@ services:
   #     - prometheus
 
 # volumes:
-#   postgres_data:
+#   postgres_data: "local path on machine that will mount to container"
