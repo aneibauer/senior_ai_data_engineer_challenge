@@ -5,3 +5,4 @@ spark_output/
 *.crc
 metadata
 0
+*checkpoints*

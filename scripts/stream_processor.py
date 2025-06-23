@@ -54,6 +54,7 @@ from time import sleep
 import os
 from pathlib import Path
 import json
+import time
 
 from data_generator.data_generator import assemble_event
 from data_generator.models.base import Event
@@ -86,12 +87,25 @@ def send_event_to_pulsar(event:Event, client):
     producer.close()
 
 
-def run_event_loop(rate_per_sec: float = 0.02):
-
+def create_pulsar_client_with_retries(retries=10, delay=10):
+    
     pulsar_host = os.getenv("PULSAR_HOST", "localhost")
     print(f"--------------------- pulsar_host: {pulsar_host}")
-    client = pulsar.Client(f"pulsar://{pulsar_host}:6650")
-    # client = pulsar.Client("pulsar://pulsar:6650")  # Use 'pulsar' if running inside Docker
+    
+    for attempt in range(retries):
+        try:
+            client = pulsar.Client(f"pulsar://{pulsar_host}:6650")
+            print("✅ Connected to Pulsar!")
+            return client
+        except Exception as e:
+            print(f"⚠️  Attempt {attempt + 1} failed: {e}")
+            time.sleep(delay)
+    raise RuntimeError(f"❌ Could not connect to Pulsar after {retries} attempts.")
+
+
+def run_event_loop(rate_per_sec: float = 0.1):
+
+    client = create_pulsar_client_with_retries()
     topic_set = set() # Set to store pulsar topics for each event
     merchant_ids = set()  # Set to store unique merchant IDs for the events
 
@@ -103,6 +117,14 @@ def run_event_loop(rate_per_sec: float = 0.02):
             print("-------------------------------------------")
             print(f"Generated event: {event.model_dump_json()}")  # Log the event for debugging
             print("-------------------------------------------")
+
+            #write to local file for debugging
+            file_path = Path(f"/tmp/test_json_payloads/event_{event.tenant_id}.json")
+            event_json = event.model_dump_json()
+            with file_path.open("w") as f:
+                json.dump(event_json, f, indent=4)
+
+
             send_event_to_pulsar(event, client)
             sleep(1 / rate_per_sec)
 
@@ -122,10 +144,7 @@ def run_burst_mode(burst_size: int = 10, delay_between_events: float = 0.1):
         burst_size: Number of events to send in the burst.
         delay_between_events: Time (in seconds) between each event.
     """
-    pulsar_host = os.getenv("PULSAR_HOST", "localhost")
-    print(f"--------------------- pulsar_host: {pulsar_host}")
-    client = pulsar.Client(f"pulsar://{pulsar_host}:6650")
-    # client = pulsar.Client("pulsar://localhost:6650")
+    client = create_pulsar_client_with_retries()
     topic_set = set() # Set to store pulsar topics for each event
     merchant_ids = set()  # Set to store unique merchant IDs for the events
 
@@ -157,10 +176,13 @@ def run_burst_mode(burst_size: int = 10, delay_between_events: float = 0.1):
 if __name__ == "__main__":
 
     #for continuous event generation
-    # run_event_loop(rate_per_sec=0.02)  # Adjust rate as needed
+    topic_set, merchant_ids = run_event_loop()  
+    
+    # Adjust rate as needed
     # run_event_loop(rate_per_sec=1)  # For testing, send 1 event per second
     # run_event_loop(rate_per_sec=10)  # For testing, send 10 events per second
 
     #for burst mode event generation
-    topic_set, merchant_ids = run_burst_mode(burst_size=10, delay_between_events=0.1)
+    # topic_set, merchant_ids = run_burst_mode(burst_size=10, delay_between_events=0.1)
+    
     print(merchant_ids)

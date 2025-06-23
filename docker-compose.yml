@@ -20,6 +20,7 @@ services:
     environment:
       - PULSAR_HOST=pulsar #pulsar client will be created with pulsar service name instead of localhost
     command: python3 -m scripts.stream_processor  # start generating data and sending to Pulsar
+    restart: on-failure # restart the container if it fails.. it sometimes does if pulsar isn't ready yet
 
   spark:
   # Using the Bitnami Spark image, which is a popular choice for running Spark in Docker
