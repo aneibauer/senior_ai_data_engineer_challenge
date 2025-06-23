@@ -48,3 +48,58 @@ in stream processing, event-driven architectures, and production operations.
 """
 
 # Your senior-level implementation here
+import pulsar
+import orjson
+from time import sleep
+
+from data_generator.data_generator import assemble_event
+from data_generator.models.base import Event
+
+
+def send_event_to_pulsar(event:Event, client):
+    """
+    Sends an event to an Apache Pulsar topic specific to the event's tenant.
+
+    Args:
+        event (pydantic Event): The event object to be sent. Must have a `tenant_id` attribute.
+        client: The Pulsar client instance used to create the producer.
+
+    Side Effects:
+        - Serializes the event to JSON using orjson.
+        - Sends the serialized event to the Pulsar topic named after the tenant.
+        - Prints a confirmation message to stdout.
+        - Closes the Pulsar producer after sending.
+
+    Raises:
+        Any exceptions raised by the Pulsar client or orjson during serialization or sending.
+    """
+    topic = f"persistent://public/default/{event.tenant_id}.events"
+    producer = client.create_producer(topic)
+
+    payload = orjson.dumps(event.model_dump_json())
+    producer.send(payload)
+
+    print(f"------------- Sent event to {topic}") #TODO: make more sophisticated logger wrapper
+    producer.close()
+
+
+def run_event_loop(rate_per_sec: int = 1):
+    client = pulsar.Client("pulsar://localhost:6650")  # Use 'pulsar' if running inside Docker
+
+    try:
+        while True:
+            event = assemble_event()
+            print("-------------------------------------------")
+            print(f"Generated event: {event.model_dump_json()}")  # Log the event for debugging
+            print("-------------------------------------------")
+            send_event_to_pulsar(event, client)
+            # sleep(1 / rate_per_sec)
+            sleep(15)
+
+    except KeyboardInterrupt:
+        print("🛑 Stopping...")
+    finally:
+        client.close()
+
+
+#TODO: Burst mode for testing - send x number of events in a short time then stop
