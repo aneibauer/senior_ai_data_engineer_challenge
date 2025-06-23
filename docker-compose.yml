@@ -1,16 +1,14 @@
+#template for docker compose file
+
 version: "3.9"
 
 services:
-
-  # ✅ Data Generator (Custom Python)
   data-generator:
     build:
       context: ./data_generator  # folder with Dockerfile and code
     depends_on:
       - pulsar
     restart: always
-
-  # ✅ Pulsar Broker
   pulsar:
     image: apachepulsar/pulsar:3.2.0
     command: bin/pulsar standalone
@@ -19,65 +17,64 @@ services:
       - "8080:8080"   # Pulsar admin REST API
     restart: always
 
-  # ✅ Spark (with PySpark + Delta support)
-  spark:
-    image: bitnami/spark:3.5
-    volumes:
-      - ./spark_app:/opt/spark-app   # Spark scripts
-      - delta_data:/data/delta       # shared Delta volume
-    depends_on:
-      - pulsar
-    environment:
-      - SPARK_MODE=master
-    restart: always
+  
+#   spark:
+#     image: bitnami/spark:3.5
+#     volumes:
+#       - ./spark_app:/opt/spark-app   # Spark scripts
+#       - delta_data:/data/delta       # shared Delta volume
+#     depends_on:
+#       - pulsar
+#     environment:
+#       - SPARK_MODE=master
+#     restart: always
 
-  # ✅ PostgreSQL
-  postgres:
-    image: postgres:15
-    restart: always
-    environment:
-      POSTGRES_DB: events
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+#   postgres:
+#     image: postgres:15
+#     restart: always
+#     environment:
+#       POSTGRES_DB: events
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: postgres
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     ports:
+#       - "5432:5432"
 
-  # ✅ FastAPI (Custom API App)
-  fastapi:
-    build:
-      context: ./api  # folder with Dockerfile + FastAPI code
-    ports:
-      - "8000:8000"
-    depends_on:
-      - postgres
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/events
-    restart: always
+#   # ✅ FastAPI (Custom API App)
+#   fastapi:
+#     build:
+#       context: ./api  # folder with Dockerfile + FastAPI code
+#     ports:
+#       - "8000:8000"
+#     depends_on:
+#       - postgres
+#     environment:
+#       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/events
+#     restart: always
 
-  # ✅ Prometheus
-  prometheus:
-    image: prom/prometheus:latest
-    volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - "9090:9090"
-    restart: always
+#   # ✅ Prometheus
+#   prometheus:
+#     image: prom/prometheus:latest
+#     volumes:
+#       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+#     ports:
+#       - "9090:9090"
+#     restart: always
 
-  # ✅ Grafana
-  grafana:
-    image: grafana/grafana:latest
-    ports:
-      - "3000:3000"
-    volumes:
-      - grafana_data:/var/lib/grafana
-    depends_on:
-      - prometheus
-    restart: always
+#   # ✅ Grafana
+#   grafana:
+#     image: grafana/grafana:latest
+#     ports:
+#       - "3000:3000"
+#     volumes:
+#       - grafana_data:/var/lib/grafana
+#     depends_on:
+#       - prometheus
+#     restart: always
 
-# ✅ Persistent Volumes
-volumes:
-  delta_data:      # for Delta Lake parquet/logs
-  postgres_data:   # for Postgres DB
-  grafana_data:    # for Grafana dashboards + settings
+# # ✅ Persistent Volumes
+# volumes:
+#   delta_data:      # for Delta Lake parquet/logs
+#   postgres_data:   # for Postgres DB
+#   grafana_data:    # for Grafana dashboards + settings
