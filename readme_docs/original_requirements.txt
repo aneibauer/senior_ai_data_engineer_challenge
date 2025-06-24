@@ -1,0 +1,118 @@
+# Senior Data Engineering Challenge - Production Dependencies
+
+# MANDATORY: Choose ONE primary technology stack
+# Decision criteria: Justify your choice based on scalability, performance, and operational requirements
+
+# OPTION A: Apache Kafka + Flink Ecosystem (Real-time streaming focus)
+# apache-flink>=1.18.0
+# kafka-python>=2.0.2
+# confluent-kafka>=2.0.0
+# flink-sql-connector-kafka>=1.18.0
+# flink-connector-jdbc>=1.18.0
+
+# OPTION B: Apache Pulsar + Spark Ecosystem (Multi-tenant focus)  
+pyspark>=3.5.0
+delta-spark>=2.4.0  
+pulsar-client>=3.3.0
+spark-streaming-pulsar>=3.5.0
+
+# OPTION C: Cloud-Native Stack (Managed services focus)
+# apache-beam[gcp]>=2.50.0  # or [aws] or [azure]
+# google-cloud-dataflow>=0.8.0
+# apache-kafka>=3.5.0
+# google-cloud-bigquery>=3.12.0
+
+# Core Production Libraries (Required regardless of stack choice)
+fastapi>=0.104.0              # Production API framework
+uvicorn[standard]>=0.24.0     # ASGI server with performance optimizations
+pydantic>=2.4.0               # Data validation and serialization
+sqlalchemy>=2.0.0             # Database ORM with async support
+alembic>=1.12.0               # Database migration management
+redis>=5.0.0                  # Caching and session management
+prometheus-client>=0.17.0     # Metrics collection
+structlog>=23.1.0             # Structured logging
+cryptography>=41.0.0          # Security and encryption
+authlib>=1.2.0                # Authentication and authorization
+
+# Advanced Analytics and ML
+pandas>=2.1.0                 # Data manipulation (optimize for large datasets)
+numpy>=1.24.0                 # Numerical computing
+scikit-learn>=1.3.0           # Machine learning for anomaly detection
+plotly>=5.17.0                # Interactive visualizations
+pyarrow>=14.0.0               # Columnar data format
+duckdb>=0.9.0                 # In-process analytical database
+
+# Performance and Monitoring
+asyncio-mqtt>=0.13.0          # Async MQTT client
+aioredis>=2.0.0               # Async Redis client
+asyncpg>=0.29.0               # Async PostgreSQL driver
+ujson>=5.8.0                  # Ultra-fast JSON parsing
+msgpack>=1.0.0                # Efficient serialization
+memory-profiler>=0.61.0       # Memory usage profiling
+py-spy>=0.3.0                 # Production profiler
+locust>=2.17.0                # Load testing
+
+# Cloud Provider SDKs (Choose based on deployment target)
+# AWS
+# boto3>=1.34.0
+# aiobotocore>=2.7.0
+
+# GCP  
+# google-cloud-storage>=2.10.0
+# google-cloud-pubsub>=2.18.0
+# google-cloud-monitoring>=2.16.0
+
+# Azure
+# azure-storage-blob>=12.19.0
+# azure-servicebus>=7.11.0
+# azure-monitor-query>=1.2.0
+
+# Security and Compliance
+jose[cryptography]>=3.3.0     # JWT token handling
+passlib[bcrypt]>=1.7.0        # Password hashing
+python-multipart>=0.0.6       # File upload handling
+pycryptodome>=3.19.0          # Advanced cryptography
+audit-log>=0.2.0              # Audit trail logging
+
+# Testing and Quality (Production-grade testing)
+pytest>=7.4.0                 # Testing framework
+pytest-asyncio>=0.21.0        # Async testing support
+pytest-cov>=4.1.0             # Coverage reporting
+pytest-benchmark>=4.0.0       # Performance benchmarking
+hypothesis>=6.88.0             # Property-based testing
+testcontainers>=3.7.0         # Integration testing with containers
+
+# Development and Operations
+black>=23.9.0                 # Code formatting
+isort>=5.12.0                 # Import sorting
+flake8>=6.1.0                 # Linting
+mypy>=1.6.0                   # Type checking
+pre-commit>=3.5.0             # Git hooks
+bandit>=1.7.0                 # Security linting
+
+# Production Deployment
+gunicorn>=21.2.0              # WSGI server for production
+docker>=6.1.0                 # Container management
+kubernetes>=28.1.0            # Kubernetes client
+helm>=3.13.0                  # Kubernetes package manager
+terraform>=1.6.0              # Infrastructure as code
+
+# Observability Stack
+opentelemetry-api>=1.21.0     # Distributed tracing
+opentelemetry-sdk>=1.21.0     # Tracing SDK
+jaeger-client>=4.8.0          # Distributed tracing
+grafana-api>=1.0.0            # Metrics visualization
+elasticsearch>=8.10.0         # Log aggregation
+
+# Data Quality and Governance
+great-expectations>=0.17.0    # Data quality validation
+apache-airflow>=2.7.0         # Workflow orchestration (if using batch processing)
+dbt-core>=1.6.0               # Data transformation (if using data warehouse patterns)
+
+# NOTE: This is a production-grade dependency list
+# Senior engineers are expected to:
+# 1. Justify their technology stack choice
+# 2. Implement proper error handling and monitoring
+# 3. Design for high availability and disaster recovery
+# 4. Optimize for performance and cost
+# 5. Ensure security and compliance requirements

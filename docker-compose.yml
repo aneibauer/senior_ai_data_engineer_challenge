@@ -1,0 +1,100 @@
+services:
+
+  #troubleshooting: remove cached constainers
+  pulsar:
+    image: apachepulsar/pulsar-all:latest
+    container_name: pulsar
+    command: bin/pulsar standalone
+    ports:
+      - "6650:6650" # pulsar client port
+      - "8080:8080" # pulsar admin port
+
+  data-generator:
+    build:
+      context: .
+      dockerfile: Dockerfile  # need a Dockerfile to install deps & run stream_processor
+    volumes:
+      - /tmp/test_json_payloads:/tmp/test_json_payloads  # Mount local dir to container dir
+    depends_on:
+      - pulsar
+    environment:
+      - PULSAR_HOST=pulsar #pulsar client will be created with pulsar service name instead of localhost
+    command: python3 -m pulsar.stream_processor  # start generating data and sending to Pulsar
+    restart: on-failure # restart the container if it fails.. it sometimes does if pulsar isn't ready yet
+
+  spark:
+    build:
+      context: .
+      dockerfile: spark_app/DockerfileStream 
+    container_name: spark
+    volumes:
+      - ./parquet_output:/opt/spark/parquet_output  # Mount local dir for parquet output
+      - ./spark_checkpoints:/opt/spark/checkpoints  # Mount local dir for Spark checkpoints
+    depends_on:
+      - pulsar
+      - postgres
+    environment:
+      - SPARK_MODE=master
+    ports:
+      - "7077:7077"   # Spark master port
+      - "8081:8081"   # Spark master web UI
+
+  spark-batch:
+    build:
+      context: .
+      dockerfile: spark_app/DockerfileBatch
+    container_name: spark-batch
+    volumes:
+      - ./jars:/opt/spark/jars  # Mount local dir for JAR files
+      - ./parquet_output:/opt/spark/parquet_output
+    depends_on:
+      - postgres
+      # - spark # uncomment for cluster mode. local mode POC now
+    environment:
+      - SPARK_MODE=master
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: user #in production these would be mounted to container,not hardcoded
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: events
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  fastapi:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: fastapi
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=postgresql://user:password@postgres:5432/events
+
+
+volumes:
+  postgres_data: #named volume for postgres data, managed by Docker,not mounted to host. allows for data persistence
+    driver: local #default anyway
+
+
+#future services to add
+  # prometheus:
+  #   image: prom/prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  # grafana:
+  #   image: grafana/grafana
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - prometheus

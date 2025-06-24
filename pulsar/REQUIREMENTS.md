@@ -1,12 +1,11 @@
-"""
-Senior Data Engineering Challenge: Advanced Real-Time Stream Processor
+# Senior Data Engineering Challenge: Advanced Real-Time Stream Processor
 
-SENIOR-LEVEL REQUIREMENTS:
-Design and implement a production-grade, distributed stream processing system
-capable of handling enterprise-scale e-commerce event streams with strict
-SLA requirements and multi-tenant isolation.
+## SENIOR-LEVEL REQUIREMENTS
 
-ADVANCED ARCHITECTURE EXPECTATIONS:
+Design and implement a production-grade, distributed stream processing system capable of handling enterprise-scale e-commerce event streams with strict SLA requirements and multi-tenant isolation.
+
+## ADVANCED ARCHITECTURE EXPECTATIONS
+
 - Process 10K+ events/second with <50ms end-to-end latency
 - Implement exactly-once processing semantics with idempotency guarantees
 - Design multi-tenant data isolation with performance optimization
@@ -15,7 +14,8 @@ ADVANCED ARCHITECTURE EXPECTATIONS:
 - Build complex event correlation across sessions, users, and time windows
 - Design real-time feature engineering pipeline for ML model serving
 
-COMPLEX EVENT PROCESSING REQUIREMENTS:
+## COMPLEX EVENT PROCESSING REQUIREMENTS
+
 - Advanced windowing strategies (tumbling, sliding, session-based)
 - Cross-stream joins with temporal constraints
 - Complex aggregations with custom business logic
@@ -23,7 +23,8 @@ COMPLEX EVENT PROCESSING REQUIREMENTS:
 - Late-arriving data handling with configurable tolerance
 - Real-time model scoring integration with sub-millisecond latency
 
-PRODUCTION OPERATIONAL REQUIREMENTS:
+## PRODUCTION OPERATIONAL REQUIREMENTS
+
 - Comprehensive error handling with circuit breakers
 - Backpressure management and load shedding
 - Distributed tracing and structured logging
@@ -31,7 +32,8 @@ PRODUCTION OPERATIONAL REQUIREMENTS:
 - Graceful shutdown and startup procedures
 - Memory management for high-throughput processing
 
-SENIOR EVALUATION CRITERIA:
+## SENIOR EVALUATION CRITERIA
+
 - Can you architect distributed streaming systems at scale?
 - Do you understand streaming semantics and trade-offs?
 - Can you implement complex business logic in streaming context?
@@ -39,12 +41,12 @@ SENIOR EVALUATION CRITERIA:
 - Can you optimize for both performance and resource efficiency?
 - Do you handle edge cases and failure scenarios properly?
 
-TECHNOLOGY STACK DECISION:
+## TECHNOLOGY STACK DECISION
+
 Choose and justify one of: Kafka+Flink, Pulsar+Spark, or Cloud-Native Beam
+
 Your choice will be evaluated based on requirements fit and trade-off analysis.
 
-This is a senior-level distributed systems challenge requiring deep expertise
-in stream processing, event-driven architectures, and production operations.
-"""
+---
 
-# Your senior-level implementation here
+*This is a senior-level distributed systems challenge requiring deep expertise in stream processing, event-driven architectures, and production operations.*

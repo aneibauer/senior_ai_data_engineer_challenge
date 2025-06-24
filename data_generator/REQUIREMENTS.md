@@ -1,11 +1,10 @@
-"""
-Senior Data Engineering Challenge: Advanced Event Data Generator
+# Senior Data Engineering Challenge: Advanced Event Data Generator
 
-SENIOR-LEVEL REQUIREMENTS:
+## SENIOR-LEVEL REQUIREMENTS:
 This is not a simple data generation task. You must architect a production-grade,
 multi-tenant event generation system that simulates realistic enterprise patterns.
 
-ADVANCED REQUIREMENTS:
+## ADVANCED REQUIREMENTS:
 - Generate events matching the complex multi-tenant schema in IMPLEMENTATION_GUIDE.md
 - Implement realistic user journey simulation with session correlation
 - Create sophisticated fraud patterns for advanced anomaly detection testing
@@ -15,7 +14,7 @@ ADVANCED REQUIREMENTS:
 - Handle high-throughput generation (10K+ events/second capability)
 - Include realistic data quality issues for testing validation frameworks
 
-ARCHITECTURE EXPECTATIONS:
+## ARCHITECTURE EXPECTATIONS:
 - Multi-threaded/async generation for performance
 - Configurable tenant isolation and data distribution
 - Realistic business logic simulation (inventory, pricing, promotions)
@@ -23,7 +22,7 @@ ARCHITECTURE EXPECTATIONS:
 - Memory-efficient handling of large-scale data generation
 - Pluggable output destinations (Kafka, Pulsar, files, direct API)
 
-SENIOR EVALUATION CRITERIA:
+## SENIOR EVALUATION CRITERIA:
 - Can you design realistic multi-tenant data patterns?
 - Do you understand e-commerce business logic complexities?
 - Can you simulate sophisticated fraud scenarios?
@@ -32,6 +31,3 @@ SENIOR EVALUATION CRITERIA:
 
 This requires deep understanding of distributed systems, e-commerce business logic,
 and production data engineering challenges. Simple random data generation will not suffice.
-"""
-
-# Your senior-level implementation here
