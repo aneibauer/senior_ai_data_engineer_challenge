@@ -87,15 +87,8 @@ def main():
     
 
     # Flatten the structured data to access fields directly, minimal example
-    flattened_df = structured_df.select(
-        col("event.schema_version").alias("schema_version"),
-        col("event.tenant_id").alias("tenant_id"),
-        col("event.partition_key").alias("partition_key"),
-        col("event.event_metadata").alias("event_metadata"),
-        col("event.event_data").alias("event_data"),
-        col("event.technical_context").alias("technical_context"),
-        col("event.ml_context").alias("ml_context")
-    )
+    flattened_df = flatten_df(structured_df)
+    flattened_df.printSchema()
 
     # Debug: Print messages to the console instead of writing to files
     query = flattened_df.writeStream \
