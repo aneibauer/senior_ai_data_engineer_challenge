@@ -80,7 +80,7 @@ services:
 
 
 volumes:
-  postgres_data: #named volume for postgres data, managed by Docker,not mounted to host
+  postgres_data: #named volume for postgres data, managed by Docker,not mounted to host. allows for data persistence
     driver: local #default anyway
 
 
