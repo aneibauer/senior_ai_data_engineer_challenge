@@ -1,3 +1,12 @@
+"""
+user_auth/user_auth.py
+
+Mock authentication and authorization module for the analytics API.
+Provides token-based authentication with multi-tenant access control.
+Uses simplified tokens for development - designed to be replaced with 
+enterprise authentication (OAuth2, JWT) in production.
+"""
+
 from fastapi import Header, HTTPException, status
 
 # Mock users for simplicity

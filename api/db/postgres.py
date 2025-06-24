@@ -1,13 +1,15 @@
-# db/postgres.py
-from databases import Database
+"""
+db/postgres.py
 
-# def get_connection():
-#     return psycopg2.connect(
-#         host="postgres",
-#         database="events",
-#         user="user",
-#         password="password"
-#     )
+This module provides the asynchronous database connection setup for the application,
+using the `databases` library with an asyncpg PostgreSQL backend. It exposes a
+`database` instance configured with the application's PostgreSQL connection URL,
+which can be imported and used throughout the API for executing asynchronous
+database operations.
+
+My PostgreSQL database currently only has one database named `events`
+"""
+from databases import Database
 
 DATABASE_URL = "postgresql+asyncpg://user:password@postgres:5432/events"
 

@@ -1,3 +1,14 @@
+"""
+main.py
+
+FastAPI application entry point for the enterprise analytics API platform.
+Configures database connections, routers, and application lifecycle management.
+
+The application uses asynchronous programming with FastAPI and async database 
+connections to handle high-concurrency workloads efficiently, enabling the platform 
+to serve concurrent analytics requests without blocking operations.
+"""
+
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 

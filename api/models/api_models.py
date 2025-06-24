@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, AfterValidator
+from pydantic import BaseModel, AfterValidator
 from typing import Annotated
 from enum import Enum
 import re
