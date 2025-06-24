@@ -11,3 +11,4 @@ metadata
 *.csv
 *.json
 *.parquet
+parquet_output/

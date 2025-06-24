@@ -23,46 +23,54 @@ services:
     restart: on-failure # restart the container if it fails.. it sometimes does if pulsar isn't ready yet
 
   spark:
-  # Using the Bitnami Spark image, which is a popular choice for running Spark in Docker
     build:
       context: .
-      dockerfile: spark_app/Dockerfile #bitnami image in dockerfile
-    # image: bitnami/spark:latest
+      dockerfile: spark_app/DockerfileStream 
     container_name: spark
     volumes:
       - ./spark_output:/opt/spark/output  # Mount local dir (./spark_output) to container dir (/opt/spark/output)
+      - ./parquet_output:/opt/spark/parquet_output  # Mount local dir for parquet output
       - ./spark_checkpoints:/opt/spark/checkpoints  # Mount local dir for Spark checkpoints
     depends_on:
       - pulsar
+      - postgres
     environment:
       - SPARK_MODE=master
     ports:
       - "7077:7077"   # Spark master port
       - "8081:8081"   # Spark master web UI
 
+  spark-batch:
+    build:
+      context: .
+      dockerfile: spark_app/DockerfileBatch
+    container_name: spark-batch
+    volumes:
+      - ./jars:/opt/spark/jars  # Mount local dir for JAR files
+    depends_on:
+      - postgres
+      # - spark # uncomment for cluster mode. local mode POC now
+    environment:
+      - SPARK_MODE=master
 
-  # #this worked. docker said "spark-worker Pulled"
-  # spark-worker:
-  #   image: bitnami/spark:3.5.0
-  #   container_name: spark-worker
-  #   environment:
-  #     - SPARK_MODE=worker
-  #     - SPARK_MASTER_URL=spark://spark:7077
-  #   depends_on:
-  #     - spark
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: user #in production these would be mounted to container,not hardcoded
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: events
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data: #named volume for postgres data, managed by Docker,not mounted to host
+    driver: local #default anyway
 
 
-  # postgres:
-  #   image: postgres:15
-  #   container_name: postgres
-  #   environment:
-  #     POSTGRES_USER: user #in production these would be mountain to container,not hardcoded
-  #     POSTGRES_PASSWORD: password
-  #     POSTGRES_DB: events
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data #place on container where volume on host exists
 
   # fastapi:
   #   build:
@@ -85,6 +93,3 @@ services:
   #     - "3000:3000"
   #   depends_on:
   #     - prometheus
-
-# volumes:
-#   postgres_data: "local path on machine that will mount to container"

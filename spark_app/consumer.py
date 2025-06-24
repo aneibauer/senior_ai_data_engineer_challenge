@@ -63,27 +63,11 @@ def main():
     parsed_df = df.select(col("value").cast("string").alias("json_str"))
     parsed_df.printSchema()
     
-    # Debug: Print parsed messages to the console
-    # parsed_df.writeStream \
-    #     .outputMode("append") \
-    #     .format("console") \
-    #     .option("truncate", "false") \
-    #     .start() \
-    #     .awaitTermination()
-    
 
     # Parse JSON string into structured data using the schema
     structured_df = parsed_df.select(from_json(col("json_str"), event_schema).alias("event"))
     # structured_df = parsed_df.select(from_json(col("json_str"), simple_schema).alias("event"))
     structured_df.printSchema()
-
-
-    # Debug: Print messages to the console instead of writing to files
-    # query = structured_df.select("event").writeStream \
-    #     .outputMode("append") \
-    #     .format("console") \
-    #     .option("truncate", "false") \
-    #     .start()
     
 
     # Flatten the structured data to access fields directly, minimal example
@@ -91,19 +75,19 @@ def main():
     flattened_df.printSchema()
 
     # Debug: Print messages to the console instead of writing to files
-    query = flattened_df.writeStream \
-        .outputMode("append") \
-        .format("console") \
-        .option("truncate", "false") \
-        .start()
-
-    # Save each raw message to a JSON file
-    # query = parsed_df.writeStream \
+    # query = flattened_df.writeStream \
     #     .outputMode("append") \
-    #     .format("json") \
-    #     .option("path", "/opt/spark/output") \
-    #     .option("checkpointLocation", "/opt/spark/checkpoints") \
+    #     .format("console") \
+    #     .option("truncate", "false") \
     #     .start()
+
+    # Save each microbatch as parquet files
+    query = parsed_df.writeStream \
+        .outputMode("append") \
+        .format("parquet") \
+        .option("path", "/opt/spark/parquet_output") \
+        .option("checkpointLocation", "/opt/spark/checkpoints") \
+        .start()
 
 
     query.awaitTermination()
