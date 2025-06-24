@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from datetime import datetime, timedelta
-from db.postgres import database
-from models.api_models import RealTimeMetricsResponse
-from user_auth import get_current_user, verify_tenant_access #uses mock authentication for simplicity for now
+
+from api.db.postgres import database
+from api.models.api_models import RealTimeMetricsResponse
+from api.user_auth.user_auth import get_current_user, verify_tenant_access #uses mock authentication for simplicity for now
 
 def parse_timeframe(timeframe: str) -> int:
     """

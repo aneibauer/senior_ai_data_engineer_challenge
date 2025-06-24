@@ -66,20 +66,25 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  fastapi:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: fastapi
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=postgresql://user:password@postgres:5432/events
+
+
 volumes:
   postgres_data: #named volume for postgres data, managed by Docker,not mounted to host
     driver: local #default anyway
 
 
-
-  # fastapi:
-  #   build:
-  #     context: ./api
-  #   ports:
-  #     - "8000:8000"
-  #   depends_on:
-  #     - postgres
-
+#future services to add
   # prometheus:
   #   image: prom/prometheus
   #   ports:

@@ -1,5 +1,4 @@
 # db/postgres.py
-import psycopg2
 from databases import Database
 
 # def get_connection():
