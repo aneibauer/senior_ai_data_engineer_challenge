@@ -29,7 +29,7 @@ def _validate_timeframe_string(value: str) -> str:
 class Tenants(Enum):
     TENANT_1 = "tenant_1"
     TENANT_2 = "tenant_2"
-    TENANT_2 = "tenant_3"
+    TENANT_3 = "tenant_3"
 
 class RealTimeMetricsResponse(BaseModel):
     tenant_id: Tenants
