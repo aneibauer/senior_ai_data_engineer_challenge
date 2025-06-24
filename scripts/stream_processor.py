@@ -80,7 +80,7 @@ def send_event_to_pulsar(event:Event, client):
     topic = f"persistent://public/default/{event.tenant_id}.events"
     producer = client.create_producer(topic)
 
-    payload = orjson.dumps(event.model_dump_json())
+    payload = orjson.dumps(event.model_dump(mode="python"))
     producer.send(payload)
 
     print(f"------------- Sent event to {topic}") #TODO: make more sophisticated logger wrapper
