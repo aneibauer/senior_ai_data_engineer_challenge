@@ -1,12 +1,12 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, from_json
-from pyspark.sql.types import StringType, StructType, StructField
+from pyspark.sql.types import StringType, StructType, StructField, ArrayType
 import os
 from datetime import datetime
 
 from data_generator.models.base import Event
 from utils.pydantic_to_spark_schema import pydantic_to_struct_type
-from utils.flatten_nested_schema_spark import flatten_df
+from utils.flatten_nested_schema_spark import flatten_df_leaf_names_deduped
 
 # Convert Pydantic models to Spark StructType
 event_schema = pydantic_to_struct_type(Event)
@@ -71,8 +71,15 @@ def main():
     
 
     # Flatten the structured data to access fields directly, minimal example
-    flattened_df = flatten_df(structured_df)
+    flattened_df = flatten_df_leaf_names_deduped(structured_df)
     flattened_df.printSchema()
+
+    # Get only the simple columns for now (not arrays or structs)
+    simple_cols = [
+        field.name for field in flattened_df.schema.fields
+        if not isinstance(field.dataType, (ArrayType, StructType))
+    ]
+    print("Simple columns:", simple_cols)
 
     # Debug: Print messages to the console instead of writing to files
     # query = flattened_df.writeStream \
@@ -82,11 +89,13 @@ def main():
     #     .start()
 
     # Save each microbatch as parquet files
-    query = parsed_df.writeStream \
+    # future: write to versioned storage based on schema version to support schema evolution
+    query = flattened_df.select([col for col in simple_cols]).writeStream \
         .outputMode("append") \
         .format("parquet") \
         .option("path", "/opt/spark/parquet_output") \
         .option("checkpointLocation", "/opt/spark/checkpoints") \
+        .option("fs.permissions.umask-mode", "022") \
         .start()
 
 

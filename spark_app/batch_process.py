@@ -26,10 +26,10 @@ def get_parquet_files(directory, min_age_secs=30) -> List[str]:
         )
     ]
 
-def archive_files(files) -> None:
-    os.makedirs(ARCHIVE_DIR, exist_ok=True)
+def archive_files(files, archive_dir=ARCHIVE_DIR) -> None:
+    os.makedirs(archive_dir, exist_ok=True)
     for f in files:
-        shutil.move(f, os.path.join(ARCHIVE_DIR, os.path.basename(f)))
+        shutil.move(f, os.path.join(archive_dir, os.path.basename(f)))
 
 
 def main():
@@ -40,7 +40,10 @@ def main():
 
     spark.sparkContext.setLogLevel("WARN")
 
+    print(f"Looking for parquet files in {PARQUET_DIR}...")
     parquet_files = get_parquet_files(PARQUET_DIR)
+    print(parquet_files)
+    print(f"Found {len(parquet_files)} parquet files to process.")
     if not parquet_files:
         print("No new parquet files to process.")
         return
@@ -66,3 +69,17 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    # sample_parquet_dir = "./parquet_output"
+    # parquet_files = get_parquet_files(sample_parquet_dir, min_age_secs=30)
+    # num_parquet_files = len(parquet_files)
+    # print(parquet_files)
+
+    # sample_archive = os.path.join(sample_parquet_dir, "archive")
+    # print(sample_archive)
+    # archive_files(parquet_files, archive_dir=sample_archive)
+
+    # new_parquet_files = get_parquet_files(sample_parquet_dir)
+    # num_parquet_files_after = len(new_parquet_files)
+    # num_parquet_files_archived = num_parquet_files - num_parquet_files_after
+    # print(num_parquet_files_archived)
