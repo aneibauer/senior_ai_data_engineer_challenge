@@ -1,50 +1,18 @@
 """
-Senior Data Engineering Challenge: Advanced Real-Time Stream Processor
+Pulsar Event Stream Producer
 
-SENIOR-LEVEL REQUIREMENTS:
-Design and implement a production-grade, distributed stream processing system
-capable of handling enterprise-scale e-commerce event streams with strict
-SLA requirements and multi-tenant isolation.
+A basic event producer that generates synthetic e-commerce events and publishes them
+to Apache Pulsar topics with tenant-based partitioning. Currently supports continuous
+and burst mode event generation for testing and development purposes.
 
-ADVANCED ARCHITECTURE EXPECTATIONS:
-- Process 10K+ events/second with <50ms end-to-end latency
-- Implement exactly-once processing semantics with idempotency guarantees
-- Design multi-tenant data isolation with performance optimization
-- Handle schema evolution without downtime (backward/forward compatibility)
-- Implement sophisticated state management with fault tolerance
-- Build complex event correlation across sessions, users, and time windows
-- Design real-time feature engineering pipeline for ML model serving
+Current Features:
+- Multi-tenant event generation with tenant-specific topics
+- Configurable event generation rates and burst modes
+- Basic Pulsar client connection with retry logic
+- JSON serialization with orjson for performance
 
-COMPLEX EVENT PROCESSING REQUIREMENTS:
-- Advanced windowing strategies (tumbling, sliding, session-based)
-- Cross-stream joins with temporal constraints
-- Complex aggregations with custom business logic
-- Event-time vs processing-time handling with watermarking
-- Late-arriving data handling with configurable tolerance
-- Real-time model scoring integration with sub-millisecond latency
-
-PRODUCTION OPERATIONAL REQUIREMENTS:
-- Comprehensive error handling with circuit breakers
-- Backpressure management and load shedding
-- Distributed tracing and structured logging
-- Custom metrics emission for business and technical monitoring
-- Graceful shutdown and startup procedures
-- Memory management for high-throughput processing
-
-SENIOR EVALUATION CRITERIA:
-- Can you architect distributed streaming systems at scale?
-- Do you understand streaming semantics and trade-offs?
-- Can you implement complex business logic in streaming context?
-- Do you design for operational excellence and observability?
-- Can you optimize for both performance and resource efficiency?
-- Do you handle edge cases and failure scenarios properly?
-
-TECHNOLOGY STACK DECISION:
-Choose and justify one of: Kafka+Flink, Pulsar+Spark, or Cloud-Native Beam
-Your choice will be evaluated based on requirements fit and trade-off analysis.
-
-This is a senior-level distributed systems challenge requiring deep expertise
-in stream processing, event-driven architectures, and production operations.
+Future Enhancements:
+- 
 """
 
 # Your senior-level implementation here
@@ -89,9 +57,10 @@ def send_event_to_pulsar(event:Event, client):
 
 def create_pulsar_client_with_retries(retries=10, delay=10):
     
-    pulsar_host = os.getenv("PULSAR_HOST", "localhost")
+    pulsar_host = os.getenv("PULSAR_HOST", "localhost") # Defaults to localhost if not set. able to run locally or in docker
     print(f"--------------------- pulsar_host: {pulsar_host}")
     
+    # Retry logic for Pulsar client connection. Ran into connection issues with Pulsar in Docker, so implemented this
     for attempt in range(retries):
         try:
             client = pulsar.Client(f"pulsar://{pulsar_host}:6650")
@@ -175,14 +144,14 @@ def run_burst_mode(burst_size: int = 10, delay_between_events: float = 0.1):
 
 if __name__ == "__main__":
 
-    #for continuous event generation
+    ## For continuous event generation
     topic_set, merchant_ids = run_event_loop(rate_per_sec=0.05)  
     
-    # Adjust rate as needed
+    ## Adjust rate as needed
     # run_event_loop(rate_per_sec=1)  # For testing, send 1 event per second
     # run_event_loop(rate_per_sec=10)  # For testing, send 10 events per second
 
-    #for burst mode event generation
+    ## For burst mode event generation
     # topic_set, merchant_ids = run_burst_mode(burst_size=5, delay_between_events=0.1)
     
     print(merchant_ids)

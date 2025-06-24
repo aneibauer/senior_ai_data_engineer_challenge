@@ -3,7 +3,6 @@ import json
 from uuid import uuid4
 
 # This script sends a test event to a Pulsar topic using the Pulsar Python client.
-# Ensure you have the Pulsar Python client installed. 
 # this assumes you have a Pulsar broker running locally on port 6650.
 # /bin/pulsar standalone starts the pulsar server locally.
 
