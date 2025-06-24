@@ -5,7 +5,8 @@ import os
 from datetime import datetime
 
 from data_generator.models.base import Event
-from scripts.pydantic_to_spark_schema import pydantic_to_struct_type
+from utils.pydantic_to_spark_schema import pydantic_to_struct_type
+from utils.flatten_nested_schema_spark import flatten_df
 
 # Convert Pydantic models to Spark StructType
 event_schema = pydantic_to_struct_type(Event)
@@ -72,8 +73,8 @@ def main():
     
 
     # Parse JSON string into structured data using the schema
-    # structured_df = parsed_df.select(from_json(col("json_str"), event_schema).alias("event"))
-    structured_df = parsed_df.select(from_json(col("json_str"), simple_schema).alias("event"))
+    structured_df = parsed_df.select(from_json(col("json_str"), event_schema).alias("event"))
+    # structured_df = parsed_df.select(from_json(col("json_str"), simple_schema).alias("event"))
     structured_df.printSchema()
 
 
