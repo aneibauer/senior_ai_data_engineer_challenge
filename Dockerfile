@@ -12,4 +12,4 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 COPY . .
 
 # Default command to run (can be overridden in docker-compose)
-# CMD ["python3", "-m", "scripts.stream_processor"]
+# CMD ["python3", "-m", "pulsar.stream_processor"]

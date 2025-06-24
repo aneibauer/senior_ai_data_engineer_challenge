@@ -4,6 +4,19 @@ from pyspark.sql.types import StructType
 from collections import defaultdict
 
 def flatten_df_leaf_names_deduped(df: DataFrame) -> DataFrame:
+    """
+    Flattens a nested Spark DataFrame by selecting all leaf columns and deduplicating column names.
+
+    For each leaf column in the DataFrame:
+    - If the leaf name is unique, it is used as the column alias.
+    - If the leaf name is duplicated (appears in multiple nested paths), the alias is constructed by joining the last two segments of the full path with an underscore (e.g., 'address_city').
+
+    Args:
+        df (DataFrame): The input Spark DataFrame with potentially nested (struct) columns.
+
+    Returns:
+        DataFrame: A flattened DataFrame with deduplicated column names.
+    """
     # Step 1: Collect all full paths and their leaf names
     paths = []
 

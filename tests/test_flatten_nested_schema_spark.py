@@ -2,8 +2,8 @@ import pytest
 from pyspark.sql import SparkSession, Row
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, StructType
 
-from utils.flatten_nested_schema_spark import flatten_df
-#TODO: needs to be updated to use flatten_df_leaf_names_deduped. expected output is different
+from utils.flatten_nested_schema_spark import flatten_df_leaf_names_deduped
+#TODO: needs to be updated to use flatten_df_leaf_names_deduped. expected output is different than when I first wrote this
 
 @pytest.fixture(scope="module")
 def spark():

@@ -8,6 +8,18 @@ from data_generator.models.base import Event
 
 # Convert Pydantic models to Spark StructType
 def pydantic_to_struct_type(model: type[BaseModel]) -> StructType:
+    """
+    Converts a Pydantic model class into a PySpark StructType schema.
+
+    Args:
+        model (type[BaseModel]): The Pydantic model class to convert.
+
+    Returns:
+        StructType: A PySpark StructType schema representing the fields and types of the Pydantic model.
+
+    Note:
+        All fields in the resulting StructType are set as nullable.
+    """
     fields = []
     for name, field in model.model_fields.items():
         spark_type = _convert_type(field.annotation)
