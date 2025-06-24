@@ -25,6 +25,7 @@ def make_event_metadata() -> EventMetadata:
         )
     )
 
+# see data_generator.data_generator.assemble_event() for implementation
 def make_base_event() -> Event:
     return Event(
         schema_version="2.1",

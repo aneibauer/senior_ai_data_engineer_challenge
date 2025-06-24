@@ -88,6 +88,7 @@ def main():
     #     .option("truncate", "false") \
     #     .start()
 
+    
     # Save each microbatch as parquet files
     # future: write to versioned storage based on schema version to support schema evolution
     query = flattened_df.select([col for col in simple_cols]).writeStream \

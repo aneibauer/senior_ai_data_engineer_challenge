@@ -38,7 +38,7 @@ router = APIRouter(
 @router.get("/metrics", response_model=RealTimeMetricsResponse)
 async def get_realtime_metrics(
     tenant_id: str = Query(..., description="The tenant ID to filter events on."),
-    timeframe: str = Query("5m", description="Timeframe for the metrics, e.g., '5m' for last 5 minutes."),
+    timeframe: str = Query("1d", description="Timeframe for the metrics, e.g., '1d' for last 1 day(s)."),
     user: dict = Depends(get_current_user)
 ):
 
@@ -55,7 +55,7 @@ async def get_realtime_metrics(
         SELECT tenant_id, COUNT(1) as event_count
         FROM commerce_events_table
         WHERE tenant_id = :tenant_id
-          AND event_metadata ->> 'timestamp' BETWEEN :start_time AND :end_time
+          AND timestamp BETWEEN :start_time AND :end_time
         GROUP BY tenant_id
     """
 

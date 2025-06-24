@@ -27,9 +27,15 @@ def _validate_timeframe_string(value: str) -> str:
 
 #TODO: future state would pull from a database of tenants. data generator currently collects those and doesn't do anything with them yet
 class Tenants(Enum):
-    TENANT_1 = "tenant_1"
-    TENANT_2 = "tenant_2"
-    TENANT_3 = "tenant_3"
+    MERCHANT_1 = "merchant_1"
+    MERCHANT_2 = "merchant_2"
+    MERCHANT_3 = "merchant_3"
+    MERCHANT_4 = "merchant_4"
+    MERCHANT_5 = "merchant_5"
+    MERCHANT_6 = "merchant_6"
+    MERCHANT_7 = "merchant_7"
+    MERCHANT_8 = "merchant_8"
+    MERCHANT_9 = "merchant_9"
 
 class RealTimeMetricsResponse(BaseModel):
     tenant_id: Tenants

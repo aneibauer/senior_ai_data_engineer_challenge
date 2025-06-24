@@ -4,6 +4,7 @@ from fastapi import Header, HTTPException, status
 MOCK_USERS = {
     "admin-token": {"role": "admin", "tenant_id": None},
     "tenant1-token": {"role": "tenant", "tenant_id": "merchant_1"},
+    "tenant2-token": {"role": "tenant", "tenant_id": "merchant_2"}
 }
 
 async def get_current_user(authorization: str = Header(...)):
