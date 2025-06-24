@@ -19,7 +19,7 @@ services:
       - pulsar
     environment:
       - PULSAR_HOST=pulsar #pulsar client will be created with pulsar service name instead of localhost
-    command: python3 -m scripts.stream_processor  # start generating data and sending to Pulsar
+    command: python3 -m pulsar.stream_processor  # start generating data and sending to Pulsar
     restart: on-failure # restart the container if it fails.. it sometimes does if pulsar isn't ready yet
 
   spark:
