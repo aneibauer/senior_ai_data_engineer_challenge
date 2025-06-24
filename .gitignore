@@ -6,3 +6,8 @@ spark_output/
 metadata
 0
 *checkpoints*
+.vscode/
+*.log
+*.csv
+*.json
+*.parquet
