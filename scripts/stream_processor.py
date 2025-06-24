@@ -176,13 +176,13 @@ def run_burst_mode(burst_size: int = 10, delay_between_events: float = 0.1):
 if __name__ == "__main__":
 
     #for continuous event generation
-    # topic_set, merchant_ids = run_event_loop()  
+    topic_set, merchant_ids = run_event_loop(rate_per_sec=0.05)  
     
     # Adjust rate as needed
     # run_event_loop(rate_per_sec=1)  # For testing, send 1 event per second
     # run_event_loop(rate_per_sec=10)  # For testing, send 10 events per second
 
     #for burst mode event generation
-    topic_set, merchant_ids = run_burst_mode(burst_size=5, delay_between_events=0.1)
+    # topic_set, merchant_ids = run_burst_mode(burst_size=5, delay_between_events=0.1)
     
     print(merchant_ids)

@@ -13,4 +13,4 @@ COPY . .
 ENV PYTHONPATH=/app:/app/data_generator
 
 # Add entrypoint to run Spark job
-CMD [ "/opt/bitnami/spark/bin/spark-submit", "--master", "local[*]", "spark_app/batch_process.py" ]
+CMD [ "/opt/bitnami/spark/bin/spark-submit", "--jars", "/opt/spark/jars/postgresql-42.7.3.jar", "--master", "local[*]", "spark_app/batch_process.py" ]

@@ -28,7 +28,6 @@ services:
       dockerfile: spark_app/DockerfileStream 
     container_name: spark
     volumes:
-      - ./spark_output:/opt/spark/output  # Mount local dir (./spark_output) to container dir (/opt/spark/output)
       - ./parquet_output:/opt/spark/parquet_output  # Mount local dir for parquet output
       - ./spark_checkpoints:/opt/spark/checkpoints  # Mount local dir for Spark checkpoints
     depends_on:
@@ -47,6 +46,7 @@ services:
     container_name: spark-batch
     volumes:
       - ./jars:/opt/spark/jars  # Mount local dir for JAR files
+      - ./spark_output:/opt/spark/parquet_output
     depends_on:
       - postgres
       # - spark # uncomment for cluster mode. local mode POC now
