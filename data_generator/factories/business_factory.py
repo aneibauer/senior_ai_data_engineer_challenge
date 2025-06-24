@@ -20,6 +20,7 @@ from data_generator.models.business import (
 # -- Business Factory Functions --
 
 def make_product_hierarchy() -> ProductHierarchy:
+    """Generates a random product hierarchy based on predefined categories and brands in business.py."""
     vertical = random.choice(list(Verticals))
     category_tree = CATEGORY_TREE[vertical.value]
     category_l2 = random.choice([k for k in category_tree if k != "Brands"])
@@ -270,57 +271,3 @@ def make_business_context() -> BusinessContext:
         transaction_context=make_transaction_context()
     )
 
-
-
-# if __name__ == "__main__":
-    # hierarchy = make_product_hierarchy()
-    # print(hierarchy.model_dump_json(indent=2))  # Print the product hierarchy in a readable JSON form
-
-    # pricing = make_pricing()
-    # print(pricing.model_dump_json(indent=2))  # Print the pricing in a readable JSON form
-
-    # inventory = make_inventory()
-    # print(inventory.model_dump_json(indent=2))  # Print the inventory in a readable JSON form
-
-    # attributes = make_product_attributes()
-    # print(attributes.model_dump_json(indent=2))  # Print the product attributes in a readable JSON form
-
-    # performance = make_performance_metrics()
-    # print(performance.model_dump_json(indent=2))  # Print the performance metrics in a readable JSON form
-
-    # product = make_product()
-    # print(product.model_dump_json(indent=2))  # Print the full product in a readable JSON form   
-
-    # products = make_products()
-    # print([p.model_dump_json(indent=2) for p in products])  # Print the list of products in a readable JSON form
-
-    # cart_value = make_cart_value(100.0)
-    # print(cart_value.model_dump_json(indent=2))  # Print the cart value breakdown
-
-    # payment_context = make_payment_context()
-    # print(payment_context.model_dump_json(indent=2))  # Print the payment context in a readable JSON form
-
-    # billing_address = make_billing_address()
-    # print(billing_address.model_dump_json(indent=2))  # Print the billing address 
-
-    # shipping_address = make_shipping_address()
-    # print(shipping_address.model_dump_json(indent=2))  # Print the shipping address
-
-    # risk_signals = make_risk_signals()
-    # print(risk_signals.model_dump_json(indent=2))  # Print the risk signals
-
-    # shipping_method = make_shipping_method()
-    # print(shipping_method.model_dump_json(indent=2))  # Print the shipping method
-
-    # cart_context = make_cart_context()
-    # print(cart_context.model_dump_json(indent=2))  # Print the cart context in a readable JSON form
-
-    # transaction_context = make_transaction_context()
-    # print(transaction_context.model_dump_json(indent=2))  # Print the transaction context in a readable JSON form
-
-    # tenant_metadata = make_tenant_metadata()
-    # print(tenant_metadata.model_dump_json(indent=2))  # Print the tenant metadata
-
-    #all of this works well!
-    # business_context = make_business_context()
-    # print(business_context.model_dump_json(indent=2))  # Print the full business context

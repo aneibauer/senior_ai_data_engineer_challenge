@@ -262,4 +262,4 @@ class TenantMetadata(BaseModel):
 class BusinessContext(BaseModel):
     tenant_metadata: TenantMetadata
     transaction_context: TransactionContext
-    # interaction_context will go in a separate module
+    # interaction_context is in a separate module

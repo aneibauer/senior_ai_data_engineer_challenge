@@ -1,5 +1,3 @@
-from pydantic import BaseModel, Field, AfterValidator, BeforeValidator
-from typing import List, Optional, Annotated, Literal
 from datetime import datetime, timedelta
 from faker import Faker
 import random
@@ -103,8 +101,3 @@ def make_user_context() -> UserContext:
         session_data=make_session_data(),
         user_profile=make_user_profile()
     )
-
-#tested and working
-# if __name__ == "__main__":
-#     user_context = make_user_context()
-#     print(user_context.model_dump_json(indent=2))  # Print the user context in a readable JSON form

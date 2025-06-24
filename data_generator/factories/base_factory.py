@@ -36,8 +36,3 @@ def make_base_event() -> Event:
         technical_context={},
         ml_context={}
     )
-
-# #tested and working
-# if __name__ == "__main__":
-#     event = make_base_event()
-#     print(event.model_dump_json(indent=2))  # Print the event in a readable JSON form

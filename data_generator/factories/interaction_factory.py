@@ -105,10 +105,3 @@ def make_interaction_context() -> InteractionContext:
         page_context=make_page_context(),
         experiment_context=make_experiment_context()
     )
-
-
-# if __name__ == "__main__":
-#     # Example usage
-#     interaction_context = make_interaction_context()
-#     print(interaction_context.model_dump_json(indent=2, exclude_none=True))
-#     # This will print a JSON representation of the generated interaction context

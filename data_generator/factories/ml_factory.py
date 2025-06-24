@@ -73,9 +73,3 @@ def make_ml_context() -> MLContext:
         feature_vectors=make_feature_vectors(),
         model_scores=make_model_scores()
     )
-
-# if __name__ == "__main__":
-#     # Example usage
-#     ml_context = make_ml_context()
-#     print(ml_context.model_dump_json(indent=2))
-#     # This will print the ML context in a JSON format with indentation for readability.

@@ -69,8 +69,3 @@ def make_technical_context() -> TechnicalContext:
         security_context=make_security_context(),
         data_lineage=make_data_lineage()
     )
-
-# if __name__ == "__main__":
-#     # Example usage
-#     tech_context = make_technical_context()
-#     print(tech_context.model_dump_json(indent=2))
