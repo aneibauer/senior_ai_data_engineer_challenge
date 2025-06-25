@@ -1,9 +1,9 @@
 ## 📚 Documentation
 
-- [🚀 Quick Start Guide]([readme_docs/quickstart_guide.md](https://github.com/aneibauer/senior_ai_data_engineer_challenge/blob/main/readme_docs/quickstart_guide.md))
-- [🐞 Troubleshooting Tips]([readme_docs/troubleshooting.md](https://github.com/aneibauer/senior_ai_data_engineer_challenge/blob/main/readme_docs/troubleshooting_guide.md))
-- [⚙️ Project Brief]([readme_docs/project_brief.md](https://github.com/aneibauer/senior_ai_data_engineer_challenge/blob/main/readme_docs/project_brief.md))
-- [🧠 Other Requirements]([api/REQUIREMENTS.md](https://github.com/aneibauer/senior_ai_data_engineer_challenge/blob/main/api/REQUIREMENTS.md)) <- you will see other REQUIREMENTS.md in subfolders with original project requirements
+- [🚀 Quick Start Guide](readme_docs/quickstart_guide.md)
+- [🐞 Troubleshooting Tips](readme_docs/troubleshooting_guide.md)
+- [⚙️ Project Brief](readme_docs/project_brief.md)
+- [🧠 Other Requirements](api/REQUIREMENTS.md)
 
 ----------------------------------------
 
