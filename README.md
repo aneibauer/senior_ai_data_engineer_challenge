@@ -331,8 +331,85 @@ Also see docstrings in each module for future enhancement ideas!
 
 **A. Architecture Diagram**
 
-> *(A diagram in Mermaid or draw.io showing: Generator → Pulsar → Spark (streaming) → Parquet → Spark (batch) → Postgres → FastAPI)*
+<details>
 
+<summary>📊 Click to expand architecture overview</summary>
+
+```html
+
++----------------------------+
+|  📦 Event Generation       |
+|----------------------------|
+| - Simulates e-commerce     |
+|   events per tenant        |
+| - Uses Pydantic data models|
+| - Continuous or burst mode |
++----------------------------+
+              |
+              v
++----------------------------+
+|  🔄 Apache Pulsar          |
+|----------------------------|
+| - Event broker (pub/sub)   |
+| - One topic per tenant     |
+| - Supports durable streams |
++----------------------------+
+              |
+              v
++----------------------------+
+|  ⚡ Spark Streaming         |
+|----------------------------|
+| - Real-time processing     |
+| - Reads from Pulsar        |
+| - Parses & validates JSON  |
+| - Flattens to tabular data |
++----------------------------+
+              |
+              v
++----------------------------+
+|  💾 Simulated Data Lake    |
+|----------------------------|
+| - Local filesystem         |
+| - Stores parquet files     |
+| - Acts as staging buffer   |
++----------------------------+
+             / \
+            /   \
+           v     v
++----------------------------+      +----------------------------+
+|  📥 Spark Batch Processing |      |  ⚡ Spark Streaming         |
+|----------------------------|      |  (still running...)         |
+| - Runs periodically        |      |                            |
+| - Loads parquet into       |      |                            |
+|   PostgreSQL via JDBC      |      |                            |
++----------------------------+      +----------------------------+
+              |
+              v
++----------------------------+
+|  🛢️ PostgreSQL              |
+|----------------------------|
+| - Analytics database       |
+| - Stores flattened events  |
++----------------------------+
+              |
+              v
++----------------------------+
+|  🌐 FastAPI Layer           |
+|----------------------------|
+| - REST API for analytics   |
+| - Async DB access          |
+| - Uses Pydantic validation |
+| - Includes role-based auth |
++----------------------------+
+
+```
+</details>
+
+
+
+- 🧱 All layers above are Docker containers managed in a docker-compose network.
+- Shared volumes allow data movement between Spark and batch services.
+- Networked services communicate via container names (pulsar, postgres, etc.)
 ---
 
 **B. API Documentation**
