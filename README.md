@@ -435,6 +435,6 @@ Also see docstrings in each module for future enhancement ideas!
 
 **E. Troubleshooting Guide**
 
-- [🐞 Troubleshooting Tips]([readme_docs/troubleshooting.md](https://github.com/aneibauer/senior_ai_data_engineer_challenge/blob/main/readme_docs/troubleshooting_guide.md))
+- [🐞 Troubleshooting Tips](readme_docs/troubleshooting_guide.md)
 
 ---
